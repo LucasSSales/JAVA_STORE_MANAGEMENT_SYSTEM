@@ -1,6 +1,7 @@
 package Signup_Login_Manager;
 
 import MainProgram.SourceMain;
+import Strategy.Strategy;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -98,48 +99,29 @@ public class SignupManager extends JFrame{
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
+        	Strategy strategy = new Strategy();
             if(e.getSource() == button_signup){
-
-                ResultSet myRs = SourceMain.jDataBase.getQueryResult("SELECT * FROM user"); //Checking weather username already exists in seller table in Database
+            	        	
                 try {
-                    while (myRs.next()){
-                        if(tf_username.getText().equals(myRs.getString("name"))){
-                            JOptionPane.showMessageDialog(null,"Username already Exists","",JOptionPane.ERROR_MESSAGE);
-                            cnd = false;
-
+                    if(tf_username.getText().equals("")|| tf_password.getText().equals("") || tf_repeatPassword.getText().equals("") || tf_email.getText().equals("")){ //For checking weather any field is left empty
+                        JOptionPane.showMessageDialog(null,"Please Make Sure you entered all Information : ","",JOptionPane.QUESTION_MESSAGE);
+                    }
+                    else {
+                        if(!tf_password.getText().equals(tf_repeatPassword.getText())){ //For checking repeated password matched
+                            JOptionPane.showMessageDialog(null,"Repeated Password Didn't match : ","",JOptionPane.ERROR_MESSAGE);
+                        }
+                        else{  //Finally put data in Database
+                        	
+                        	if(strategy.searchUser("user", tf_username.getText()) != null || strategy.searchUser("seller", tf_username.getText()) != null) {
+                        		JOptionPane.showMessageDialog(null,"Username already Exists","",JOptionPane.ERROR_MESSAGE);
+                        	}else {
+                                SourceMain.jDataBase.insertRow("INSERT INTO `"+userIdentifier+"`(`id`,`name`,`password`,`email`) VALUES ( NULL,'"+tf_username.getText()+"','"+tf_password.getText()+"','"+tf_email.getText()+"');");
+                                JOptionPane.showMessageDialog(null,"Signup Successful : ","",JOptionPane.INFORMATION_MESSAGE);
+                        	}
                         }
                     }
-
-                }
-                catch (Exception ex){}
-
-                ResultSet myRs2 = SourceMain.jDataBase.getQueryResult("SELECT * FROM seller"); //For checking weather username already exists in user table in Database
-                try {
-                    while (myRs2.next()){
-                        if(tf_username.getText().equals(myRs2.getString("name"))){
-                            JOptionPane.showMessageDialog(null,"Username already Exists","",JOptionPane.ERROR_MESSAGE);
-                            cnd = false;
-
-                        }
-                    }
-
-                }
-                catch (Exception ex){}
-
-
-                if(tf_username.getText().equals("")|| tf_password.getText().equals("") || tf_repeatPassword.getText().equals("") || tf_email.getText().equals("")){ //For checking weather any field is left empty
-                    JOptionPane.showMessageDialog(null,"Please Make Sure you entered all Information : ","",JOptionPane.QUESTION_MESSAGE);
-                }
-                else {
-                    if(!tf_password.getText().equals(tf_repeatPassword.getText())){ //For checking repeated password matched
-                        JOptionPane.showMessageDialog(null,"Repeated Password Didn't match : ","",JOptionPane.ERROR_MESSAGE);
-                    }
-                    else if(cnd){  //Finally put data in Database
-                        SourceMain.jDataBase.insertRow("INSERT INTO `"+userIdentifier+"`(`id`,`name`,`password`,`email`) VALUES ( NULL,'"+tf_username.getText()+"','"+tf_password.getText()+"','"+tf_email.getText()+"');");
-                        JOptionPane.showMessageDialog(null,"Signup Successful : ","",JOptionPane.INFORMATION_MESSAGE);
-                    }
-                }
+                }catch(Exception ex) {}
+                
             }
             else if(e.getSource() == button_login){
                 System.out.println("Login");
