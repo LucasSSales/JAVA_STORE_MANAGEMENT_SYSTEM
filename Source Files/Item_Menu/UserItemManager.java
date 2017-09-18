@@ -2,6 +2,7 @@ package Item_Menu;
 
 import MainProgram.SourceMain;
 import Signup_Login_Manager.LoginManager;
+import Strategy.Strategy;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -103,51 +104,15 @@ public class UserItemManager extends JFrame{
     }
 
     public class ButtonHandler implements ActionListener{
+    	Strategy strategy = new Strategy();
         @Override
         public void actionPerformed(ActionEvent e) {
             if(e.getSource() == searchB) {
-                String str = search.getText();
-                ListModel listModel = itemList.getModel();
-                for (int i = 0; i < listModel.getSize(); i++) {
-                    if (listModel.getElementAt(i).equals(str)) {
-
-                        String[] serItem;
-                        System.out.println(itemList.getSelectedValue());
-                        ResultSet myRs = SourceMain.jDataBase.getQueryResult("SELECT * FROM `itemlist2` WHERE itemname REGEXP '" + str + "'");
-
-                        try {
-                            myRs.next();
-                            price.setText("Price : " + myRs.getString("price"));
-                            itemAvailable.setText("Available : " + myRs.getString("quantity"));
-                            serItem = new String[]{myRs.getString("itemname")};
-                            //description.setText("Really Dude");
-
-                            price.setBounds(470, 50, price.getPreferredSize().width, price.getPreferredSize().height);
-                            itemAvailable.setBounds(470, 80, itemAvailable.getPreferredSize().width, itemAvailable.getPreferredSize().height);
-                            //description.setBounds(470,120, description.getPreferredSize().width, description.getPreferredSize().height);
-
-                        } catch (Exception ex) {
-                            JOptionPane.showMessageDialog(null, "Database - Show Item Description Error");
-                            serItem = new String[]{"No Result"};
-
-                        }
-                        itemList.setListData(serItem); //JList.setListData() takes an array of Strings as parameter and shows data serially from the array in the table. SOURCE : JAVA Tutorial by Bucky
-
-
-                    }
-                }
+            	strategy.searchButton(search.getText(), itemList, price, itemAvailable);
             }
             else if(e.getSource() == logoutB){
-                String[] str = new String[]{"Yes","No"};
-                int logout = JOptionPane.showOptionDialog(null, "Are you sure you want to Log Out", "Logout", JOptionPane.NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, str, null);
-
-                if(logout == 0) {   //Delete Row From Table
-                    userItemManager.dispose();
-                    lmg.clearTextFields();
-                    lmg.setVisible(true);
-                }
+            	strategy.logoutButton(userItemManager, lmg);
             }
-
         }
     }
 

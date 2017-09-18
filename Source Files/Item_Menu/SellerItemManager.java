@@ -2,10 +2,13 @@ package Item_Menu;
 
 import MainProgram.SourceMain;
 import Signup_Login_Manager.LoginManager;
+import Strategy.Strategy;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import java.awt.Window;
 import java.awt.event.*;
 import java.sql.ResultSet;
 import java.util.*;
@@ -118,38 +121,11 @@ public class SellerItemManager extends JFrame{
     }
 
     public class ButtonHandler implements ActionListener {
+    	Strategy strategy = new Strategy();
         @Override
         public void actionPerformed(ActionEvent e) {
             if(e.getSource() == searchB) {
-                String str = search.getText();
-                ListModel listModel = itemList.getModel();
-                for (int i = 0; i < listModel.getSize(); i++) {
-                    if (listModel.getElementAt(i).equals(str)) {
-
-                        String[] serItem;
-                        System.out.println(itemList.getSelectedValue());
-                        ResultSet myRs = SourceMain.jDataBase.getQueryResult("SELECT * FROM `itemlist2` WHERE itemname REGEXP '" + str + "'");
-
-                        try {
-                            myRs.next();
-                            price.setText("Price : " + myRs.getString("price"));
-                            itemAvailable.setText("Available : " + myRs.getString("quantity"));
-                            serItem = new String[]{myRs.getString("itemname")};
-
-                            price.setBounds(470, 50, price.getPreferredSize().width, price.getPreferredSize().height);
-                            itemAvailable.setBounds(470, 80, itemAvailable.getPreferredSize().width, itemAvailable.getPreferredSize().height);
-
-
-                        } catch (Exception ex) {
-                            JOptionPane.showMessageDialog(null, "Database - Show Item Description Error");
-                            serItem = new String[]{"No Result"};
-
-                        }
-                        itemList.setListData(serItem);
-
-
-                    }
-                }
+            	strategy.searchButton(search.getText(), itemList, price, itemAvailable);
             }
             else if(e.getSource() == sellB){
                 boolean cnd;
@@ -217,14 +193,7 @@ public class SellerItemManager extends JFrame{
             }
 
             else if(e.getSource() == logoutB){
-                String[] str = new String[]{"Yes","No"};
-                int logout = JOptionPane.showOptionDialog(null, "Are you sure you want to Log Out", "Logout", JOptionPane.NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, str, null);
-
-                if(logout == 0) {   //Delete Row From Table
-                    sellerItemManager.dispose();
-                    lmg.clearTextFields();
-                    lmg.setVisible(true);
-                }
+            	strategy.logoutButton(sellerItemManager, lmg);
             }
 
 
@@ -235,6 +204,7 @@ public class SellerItemManager extends JFrame{
 
         @Override
         public void itemStateChanged(ItemEvent e) {
+        	System.out.println("itemStateChanged");
             if(e.getSource() == category){
 
                 if(e.getStateChange() == ItemEvent.SELECTED) { //Item Selection from Database goes here
