@@ -79,4 +79,5 @@ public class Strategy {
             lmg.setVisible(true);
         }
     }
+    
 }
