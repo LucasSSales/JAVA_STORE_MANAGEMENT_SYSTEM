@@ -18,38 +18,26 @@ public class SellProxy extends JFrame implements Sell {
 	
 	@Override
 	public JButton showSellButton() {
-		if(acess instanceof SellerItemManager) {
-			
-			JButton sellB = new JButton("<< SELL >>");
-	        sellB.setBounds(470,180,210,35);
-	        //sellB.addActionListener(buttonHandler);
-	        return sellB;
-		}
-		return null;
+		SellOptions selloptions = new SellOptions(acess);	
+		return selloptions.showSellButton();
 	}
 
 	@Override
 	public JLabel showSellingQuantity() {
-		if(acess instanceof SellerItemManager) {
-			JLabel amount = new JLabel("Selling Quantity :");
-	        amount.setBounds(470,120,amount.getPreferredSize().width,amount.getPreferredSize().height);
-	        return amount;
-		}
-		return null;
+		SellOptions selloptions = new SellOptions(acess);
+		return selloptions.showSellingQuantity();
 	}
 
 	@Override
 	public JLabel showTotalSold() {
-		JLabel grossSoldText = new JLabel("Total Sold : ");
-        grossSoldText.setBounds(470,250,grossSoldText.getPreferredSize().width,grossSoldText.getPreferredSize().height);
-        return grossSoldText;
+		SellOptions selloptions = new SellOptions(acess);
+        return selloptions.showTotalSold();
 	}
 	
 	@Override
 	public JTextField showSellingtext() {
-		JTextField sellQuantity = new JTextField();
-        sellQuantity.setBounds(580,120,100,25);
-		return sellQuantity;
+		SellOptions selloptions = new SellOptions(acess);
+		return selloptions.showSellingtext();
 	}
 	
 }
