@@ -28,6 +28,9 @@ import MainProgram.SourceMain;
 import Proxy.Sell;
 import Proxy.SellProxy;
 import Signup_Login_Manager.LoginManager;
+import State.Avaliable;
+import State.ProductState;
+import State.Unavaliable;
 
 public class ItemMenu extends JFrame{
 	JComboBox category;
@@ -43,6 +46,7 @@ public class ItemMenu extends JFrame{
     JFrame acess;
     int grossSold=0;
     int selectedItemQuantity,selectedItemPrice,selectedItemID;
+    private ProductState state;
     
     public ItemMenu(String type){
     	super(type);
@@ -125,6 +129,7 @@ public class ItemMenu extends JFrame{
         try {
         	sellB = (JButton) add(proxy.showSellButton());
         	sellB.addActionListener(buttonHandler);
+        	
         	
         	grossSoldText = (JLabel) add(proxy.showTotalSold());
         	sellQuantity = (JTextField) add(proxy.showSellingtext());
@@ -265,6 +270,15 @@ public class ItemMenu extends JFrame{
                     itemAvailable.setText("Available : " + myRs.getString("quantity"));
                     selectedItemQuantity = Integer.parseInt(myRs.getString("quantity"));
                     //description.setText("Really Dude");
+                    
+                    if(selectedItemQuantity > 0)
+                    	state = new Avaliable();
+                    else
+                    	state = new Unavaliable();
+                    
+                    sellB.setEnabled(state.enableButton());
+                    	
+                    
                     selectedItemID = Integer.parseInt(myRs.getString("id"));
 
                     price.setBounds(470, 50, price.getPreferredSize().width, price.getPreferredSize().height);
