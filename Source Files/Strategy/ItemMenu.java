@@ -271,14 +271,16 @@ public class ItemMenu extends JFrame{
                     selectedItemQuantity = Integer.parseInt(myRs.getString("quantity"));
                     //description.setText("Really Dude");
                     
-                    if(selectedItemQuantity > 0)
-                    	state = new Avaliable();
-                    else
-                    	state = new Unavaliable();
-                    
-                    sellB.setEnabled(state.enableButton());
+                    try {
+                        if(selectedItemQuantity > 0)
+                        	state = new Avaliable();
+                        else
+                        	state = new Unavaliable();
+                        
+                        sellB.setEnabled(state.enableButton());
                     	
-                    
+                    }catch(Exception exc) {}
+                                      
                     selectedItemID = Integer.parseInt(myRs.getString("id"));
 
                     price.setBounds(470, 50, price.getPreferredSize().width, price.getPreferredSize().height);
