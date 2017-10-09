@@ -38,6 +38,5 @@ public class SellProxy extends JFrame implements Sell {
 	public JTextField showSellingtext() {
 		SellOptions selloptions = new SellOptions(acess);
 		return selloptions.showSellingtext();
-	}
-	
+	}	
 }
