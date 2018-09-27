@@ -2,7 +2,8 @@
 SQLyog Ultimate v8.82 
 MySQL - 5.5.5-10.1.8-MariaDB : Database - itemlist
 *********************************************************************
-*/
+*/
+
 
 /*!40101 SET NAMES utf8 */;
 

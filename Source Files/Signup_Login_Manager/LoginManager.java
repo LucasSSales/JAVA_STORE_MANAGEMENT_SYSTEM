@@ -3,11 +3,16 @@ package Signup_Login_Manager;
 
 import Item_Menu.SellerItemManager;
 import MainProgram.SourceMain;
+import Strategy.ItemMenu;
+import Strategy.Strategy;
 import Inventory_System.InventoryManager;
-import Item_Menu.UserItemManager;
+import Item_Menu.*;
 import javax.swing.*;
+
+import java.awt.HeadlessException;
 import java.awt.event.*;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 
 public class LoginManager extends JFrame{
@@ -93,60 +98,23 @@ public class LoginManager extends JFrame{
 
         }
     }
-
+    
     public class EventHandler implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e){
+        	Strategy strategy = new Strategy();
             if(e.getSource() == button_login){
-                boolean nf1=true;
-                boolean nf2=true;
-
                 try {
-                    ResultSet myRs1 = SourceMain.jDataBase.getQueryResult("SELECT * FROM seller"); //Here 1st time checked if the user is in seller then nf1 = false
-                                                                                                    //Otherwise it wil check if the user is  normal user
-                    while (myRs1.next()) {
-                        if(  tf_username.getText().equals(myRs1.getString("name")) && pf_user_password.getText().equals(myRs1.getString("password"))  ){
-                            JOptionPane.showMessageDialog(null,"Login Successful");
-
-                            SellerItemManager sellerItemManager = new SellerItemManager(lmgr);
-                            sellerItemManager .setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-                            sellerItemManager .setSize(800, 600);
-                            sellerItemManager .setVisible(true);
-                            lmgr.setVisible(false);
-
-                            nf1 = false;
-                            break;
-                        }
-
-                    }
-                    if(nf1) { //if not a seller then it must be an admin or normal user
-
-                        ResultSet myRs2 = SourceMain.jDataBase.getQueryResult("SELECT * FROM user");
-                        while (myRs2.next()) {
-                            if (tf_username.getText().equals(myRs2.getString("name")) && pf_user_password.getText().equals(myRs2.getString("password"))) {
-                                JOptionPane.showMessageDialog(null, "Login Successful");
-                                if (tf_username.getText().equals("admin")) {
-                                    InventoryManager inventoryManager = new InventoryManager(lmgr);
-                                    inventoryManager.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-                                    inventoryManager.setSize(800, 600);
-                                    inventoryManager.setVisible(true);
-                                    lmgr.setVisible(false);
-                                } else {
-                                    UserItemManager userItemManager = new UserItemManager(lmgr);
-                                    userItemManager.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-                                    userItemManager.setSize(800, 600);
-                                    userItemManager.setVisible(true);
-                                    lmgr.setVisible(false);
-                                }
-                                nf2 = false;
-                                break;
-                            }
-
-                        }
-                        if (nf2 && nf1) { //If any condition not fullfills that mens username.passowrd incorrect
-                            JOptionPane.showMessageDialog(null, "Username/Password Incorrect");
-                        }
-                    }
+                	if(strategy.searchUser("seller", tf_username.getText() + "/" + pf_user_password.getText()) != null) {
+                		SellerItemManager sellerItemManager = (SellerItemManager) strategy.screen(new SellerItemManager(lmgr), lmgr);
+                	}else if (strategy.searchUser("user", tf_username.getText() + "/" + pf_user_password.getText()) != null){
+                		if(tf_username.getText().equals("admin")) {
+                			InventoryManager inventoryManager = (InventoryManager) strategy.screen(new InventoryManager(lmgr), lmgr);
+                		}else {
+                			UserItemManager userItemManager = (UserItemManager) strategy.screen(new UserItemManager(lmgr), lmgr);
+                		}
+                	}else
+                		JOptionPane.showMessageDialog(null, "Username/Password Incorrect");
                 }
                 catch (Exception ex){
                     JOptionPane.showMessageDialog(null,"DataBase Read Error");
@@ -154,16 +122,12 @@ public class LoginManager extends JFrame{
 
             }
             else if(e.getSource() == button_signup){ //If signup button clicked a new signup window will appear
-                SignupManager signupManager = new SignupManager();
+            	
+            	SignupManager signupManager = (SignupManager) strategy.screen(new SignupManager(), reference);
                 signupManager.setUserIdentifier("user"); //Trick used to consider weather Signup will be for user or seller.
                 //parameter is a userIdentifier variable which is set by calling a public function in setUserIdentifier in SignupManager
                 //and the userIdentifier used in INSERT query.
-                signupManager.setSize(800,600);
-                signupManager.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-                signupManager.setVisible(true);
                 signupManager.setLoginManagerReference(reference);
-                reference.setVisible(false);
-
             }
 
         }
